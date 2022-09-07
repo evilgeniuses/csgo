@@ -4,18 +4,19 @@ import platform
 import sys
 
 
-if sys.platform != 'win32' and platform.python_implementation() == 'CPython':
+if sys.platform != "win32" and platform.python_implementation() == "CPython":
     try:
         import wheel.bdist_wheel
     except ImportError:
         cmdclass = {}
     else:
+
         class bdist_wheel(wheel.bdist_wheel.bdist_wheel):
             def finalize_options(self) -> None:
-                self.py_limited_api = f'cp3{sys.version_info[1]}'
+                self.py_limited_api = f"cp3{sys.version_info[1]}"
                 super().finalize_options()
 
-        cmdclass = {'bdist_wheel': bdist_wheel}
+        cmdclass = {"bdist_wheel": bdist_wheel}
 else:
     cmdclass = {}
 
@@ -32,6 +33,7 @@ def get_version():
         raise Exception("VERSION file not found")
 
     return version
+
 
 setup(
     name="csgo",
@@ -51,12 +53,7 @@ setup(
     ],
     package_data={
         # If any package contains *.txt or *.rst files, include them:
-        "": [
-            "data/map/*.png",
-            "data/map/*.json",
-            "data/nav/*.txt",
-            "data/nav/*.csv"
-        ]
+        "": ["data/map/*.png", "data/map/*.json", "data/nav/*.txt", "data/nav/*.csv"]
     },
     # metadata to display on PyPI
     author="Peter Xenopoulos",
@@ -70,15 +67,16 @@ setup(
         "Github": "https://github.com/pnxenopoulos/csgo/",
     },
     classifiers=["License :: OSI Approved :: MIT License"],
-    build_golang={'root': 'github.com/evilgeniuses/csgo', 'strip': False},
+    build_golang={"root": "github.com/evilgeniuses/csgo", "strip": False},
     ext_modules=[
         Extension(
-            'csgo.parser.wrapper',
-            sources=['csgo/parser/wrapper.go'],
-            include_dirs=[f'{os.path.dirname(os.path.realpath(__file__))}/csgo/parser'],
-            py_limited_api=True, define_macros=[('Py_LIMITED_API', None)]
+            "csgo.parser.wrapper",
+            sources=["csgo/parser/wrapper.go"],
+            include_dirs=[f"{os.path.dirname(os.path.realpath(__file__))}/csgo/parser"],
+            py_limited_api=True,
+            define_macros=[("Py_LIMITED_API", None)],
         )
     ],
     cmdclass=cmdclass,
-    setup_requires=['setuptools-golang'],
+    setup_requires=["setuptools-golang"],
 )
