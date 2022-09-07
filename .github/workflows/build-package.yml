@@ -44,22 +44,18 @@ jobs:
       environment: "dev"
       aws-account: "834354940696"
       aws-region: "us-west-2"
-      role-session-name: CsgoDevSession
       role-to-assume: AWS_ROLE_TO_ASSUME_NEW_DEV
-      pypi-aws-account: "597319750692"
-      pypi-role-to-assume: arn:aws:iam::597319750692:role/GithubPipelineRole
-      pypi-aws-region: "us-west-2"
-      pypi-domain-name: "eg"
-      pypi-repo-name: "prod"
     permissions:
       id-token: write
       contents: write
     
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17.6
+
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python-version }}
@@ -68,7 +64,6 @@ jobs:
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: ${{ secrets[env.role-to-assume] }}
-          role-session-name: ${{ env.role-session-name }}
           aws-region: ${{ env.aws-region }}
       
       - name: Build package dist Ubuntu
