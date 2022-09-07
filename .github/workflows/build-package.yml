@@ -69,25 +69,25 @@ jobs:
       - name: Build package dist Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: |
-          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository prod
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository dev
           pip install --upgrade pip setuptools
           pip install wheel twine setuptools-golang
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository prod --format pypi --package eg-common --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository dev --format pypi --package csgo --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
         if: matrix.os != 'ubuntu-latest'
         run: |
-          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository prod
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository dev
           pip install --upgrade pip setuptools
           pip install  wheel twine
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository prod --format pypi --package eg-common --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository dev --format pypi --package csgo --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
     
 
