@@ -69,97 +69,86 @@ jobs:
       - name: Build package dist Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: |
-          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository dev
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
           pip install wheel twine setuptools-golang
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository dev --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
         if: matrix.os != 'ubuntu-latest'
         run: |
-          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository dev
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
           pip install  wheel twine
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository dev --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
+  
+  Production:
+    name: Production
+    if: startsWith(github.ref, 'refs/tags')
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    needs: Lint
+    runs-on: ${{ matrix.os }}
+    environment:
+      name: Production
+    env:
+      python-version: 3.8
+      environment: "prod"
+      aws-account: "597319750692"
+      aws-region: "us-west-2"
+      role-to-assume: AWS_ROLE_DATA_AND_ANALYTICS_PROD
+    permissions:
+      id-token: write
+      contents: write
     
+    steps:
+      - uses: actions/checkout@v2
 
-  # builds:
-  #   strategy:
-  #     matrix:
-  #       os: [windows-latest, ubuntu-latest, macos-latest]
-  #       python-version: ['3.8']
-  #       include:
-  #         - environment: "dev"
-  #           aws-account: "813914655382"
-  #           aws-region: "us-west-2"
-  #           role-session-name: EgCommonPackageDevSession
-  #           role-to-assume: AWS_ROLE_TO_ASSUME_DEV
-  #   runs-on: ${{ matrix.os }}
-  #   permissions:
-  #     id-token: write
-  #     contents: write
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-go@v2
-  #       with:
-  #         go-version: 1.17.6
-  #     - uses: actions/setup-python@v2
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.6
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python-version }}
       
-  #     - name: Configure AWS Credentials
-  #       uses: aws-actions/configure-aws-credentials@master
-  #       # if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       with:
-  #         role-to-assume: ${{ secrets[matrix.role-to-assume] }}
-  #         role-session-name: ${{ matrix.role-session-name }}
-  #         aws-region: ${{ matrix.aws-region }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: ${{ secrets[env.role-to-assume] }}
+          aws-region: ${{ env.aws-region }}
       
-  #     - name: Configure CodeArtifact credentials for Windows
-  #       # if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       if: matrix.os == 'windows-latest'
-  #       run: |
-  #           echo "TWINE_REPOSITORY_URL=$(aws codeartifact get-repository-endpoint --domain eg-pypi --domain-owner ${{ matrix.aws-account }} --repository eg-pypi --format pypi --query repositoryEndpoint)" >> $env:GITHUB_ENV
-  #           echo "TWINE_PASSWORD=$(aws codeartifact get-authorization-token --domain eg-pypi --domain-owner ${{ matrix.aws-account }} --query authorizationToken)" >> $env:GITHUB_ENV
-  #           echo "TWINE_USERNAME=aws" >> $env:GITHUB_ENV
-
-  #     - name: Configure CodeArtifact credentials for Ubuntu, MacOS
-  #       # if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       if: matrix.os != 'windows-latest'
-  #       run: |
-  #           echo "TWINE_REPOSITORY_URL=$(aws codeartifact get-repository-endpoint --domain eg-pypi --domain-owner ${{ matrix.aws-account }} --repository eg-pypi --format pypi --query repositoryEndpoint)" >> $GITHUB_ENV
-  #           echo "TWINE_PASSWORD=$(aws codeartifact get-authorization-token --domain eg-pypi --domain-owner ${{ matrix.aws-account }} --query authorizationToken)" >> $GITHUB_ENV
-  #           echo "TWINE_USERNAME=aws" >> $GITHUB_ENV
-
-  #     - name: Build package dist Ubuntu
-  #       # if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       if: matrix.os == 'ubuntu-latest'
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install setuptools wheel twine setuptools-golang
-  #         # setuptools-golang-build-manylinux-wheels
-  #         python setup.py bdist_wheel
+      - name: Build package dist Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
+          pip install --upgrade pip setuptools
+          pip install wheel twine setuptools-golang
+          export TAG=${{ github.ref_name }}
+          echo "${TAG:1}" > VERSION
+          echo `python3 setup.py --version` > VERSION
+          python setup.py bdist_wheel
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          python -m twine upload --repository codeartifact dist/* --verbose
       
-  #     - name: Build package dist Windows, MacOS
-  #       # if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       if: matrix.os != 'ubuntu-latest'
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install setuptools wheel twine
-  #         python setup.py bdist_wheel
-
-  #     - name: Publish to repo
-  #       if: github.event_name == 'release' && github.event.action == 'created' && startsWith(github.ref, 'refs/tags')
-  #       run: |
-  #         python -m twine upload --repository-url ${{ env.TWINE_REPOSITORY_URL }} dist/*.whl --verbose -u ${{ env.TWINE_USERNAME }} -p ${{ env.TWINE_PASSWORD }}
-  #       env:
-  #         TWINE_USERNAME: ${{ env.TWINE_USERNAME }}
-  #         TWINE_PASSWORD: ${{ env.TWINE_PASSWORD }}
+      - name: Build package dist Windows, MacOS
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
+          pip install --upgrade pip setuptools
+          pip install  wheel twine
+          export TAG=${{ github.ref_name }}
+          echo "${TAG:1}" > VERSION
+          echo `python3 setup.py --version` > VERSION
+          python setup.py bdist_wheel
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          python -m twine upload --repository codeartifact dist/* --verbose
