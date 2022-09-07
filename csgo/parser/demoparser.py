@@ -159,17 +159,19 @@ class DemoParser:
             self.dmg_rolled,
             self.demo_id,
             self.json_indentation,
-            self.outpath
+            self.outpath,
         )
 
         if ret != 0:
-            self.logger.error(f"wrapper_parse call failed with rc {ret}, error {error_string}")
+            self.logger.error(
+                f"wrapper_parse call failed with rc {ret}, error {error_string}"
+            )
             self.parse_error = True
             self.parse_error_string = error_string
 
             return
 
-        self.output_file = self.outpath + '/' + self.demo_id + ".json"
+        self.output_file = self.outpath + "/" + self.demo_id + ".json"
 
         if os.path.isfile(self.output_file):
             self.logger.info("Wrote demo parse output to " + self.output_file)
@@ -598,7 +600,7 @@ class DemoParser:
         remove_bad_endings=True,
         return_type="json",
         save_to_json=True,
-        raise_excp=True
+        raise_excp=True,
     ):
         """Cleans a parsed demofile JSON.
 

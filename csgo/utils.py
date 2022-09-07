@@ -63,23 +63,28 @@ def transform_csv_to_json(sampleCsv):
         finalDic[curMap] = mapDic
     return finalDic
 
+
 def call_process(
     cmd,
     live_output=False,
     printcmd=False,
     curdir="/",
-    valid_returncodes=[0, ],
-    inc_returncode=False
+    valid_returncodes=[
+        0,
+    ],
+    inc_returncode=False,
 ):
     output = ""
 
     if printcmd:
         logger.info(cmd)
 
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, cwd=curdir)
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, cwd=curdir
+    )
 
     if live_output:
-        for line in iter(process.stdout.readline, ''):
+        for line in iter(process.stdout.readline, ""):
             if len(line) > 0:
                 logger.info(line.decode("ascii", "ignore").rstrip("\n"))
                 output = output + line.decode("ascii", "ignore")
