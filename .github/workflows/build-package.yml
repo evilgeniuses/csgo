@@ -4,13 +4,8 @@ name: build-package
 # events but only for the master branch
 on:
   push:
-    branches:
-     - main
-  release:
     tags:
       - v*
-    types:
-      - published
   workflow_dispatch:
     inputs:
       environment:
@@ -24,11 +19,13 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     env:
-      python-version: 3.8
+      python-version: "3.10"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Black Lint
         uses: psf/black@stable
+        with:
+          version: "22.12.0"
 
   FeatureBranch:
     name: Feature Branch -> Develop
@@ -40,7 +37,7 @@ jobs:
     environment:
       name: Develop
     env:
-      python-version: 3.8
+      python-version: "3.10"
       environment: "dev"
       aws-account: "834354940696"
       aws-region: "us-west-2"
@@ -54,7 +51,7 @@ jobs:
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.17.6
+          go-version: 1.20.2
 
       - uses: actions/setup-python@v2
         with:
@@ -101,7 +98,7 @@ jobs:
     environment:
       name: Production
     env:
-      python-version: 3.8
+      python-version: "3.10"
       environment: "prod"
       aws-account: "597319750692"
       aws-region: "us-west-2"
@@ -111,11 +108,11 @@ jobs:
       contents: write
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions/setup-go@v2
         with:
-          go-version: 1.17.6
+          go-version: 1.20.2
 
       - uses: actions/setup-python@v2
         with:
