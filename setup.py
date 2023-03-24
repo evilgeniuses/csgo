@@ -3,6 +3,11 @@ import os
 import platform
 import sys
 
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 
 if sys.platform != "win32" and platform.python_implementation() == "CPython":
     try:
@@ -36,7 +41,7 @@ def get_version():
 
 
 setup(
-    name="csgo",
+    name="awpy",
     version=get_version(),
     packages=find_packages(),
     # Project uses reStructuredText, so ensure that the docutils get
@@ -50,29 +55,41 @@ setup(
         "textdistance>=4.2.0",
         "imageio>=2.9.0",
         "tqdm>=4.55.2",
+        "Shapely>=1.8.2",
+        "sympy>=1.10.1",
     ],
     package_data={
         # If any package contains *.txt or *.rst files, include them:
-        "": ["data/map/*.png", "data/map/*.json", "data/nav/*.txt", "data/nav/*.csv"]
+        "": [
+            "*.go",
+            "data/map/*.png",
+            "data/map/*.json",
+            "data/nav/*.txt",
+            "data/nav/*.csv",
+            "*.mod",
+            "*.sum",
+        ]
     },
     # metadata to display on PyPI
     author="Peter Xenopoulos",
     author_email="xenopoulos@nyu.edu",
     description="Counter-Strike: Global Offensive data parsing, analysis and visualization functions",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     keywords="esports sports-analytics csgo counter-strike",
-    url="https://github.com/pnxenopoulos/csgo",
+    url="https://github.com/pnxenopoulos/awpy",
     project_urls={
-        "Issues": "https://github.com/pnxenopoulos/csgo/issues",
-        "Documentation": "https://github.com/pnxenopoulos/csgo/tree/main/docs",
-        "Github": "https://github.com/pnxenopoulos/csgo/",
+        "Issues": "https://github.com/pnxenopoulos/awpy/issues",
+        "Documentation": "https://awpy.readthedocs.io/en/latest/?badge=latest",
+        "GitHub": "https://github.com/pnxenopoulos/awpy/",
     },
     classifiers=["License :: OSI Approved :: MIT License"],
     build_golang={"root": "github.com/evilgeniuses/csgo", "strip": False},
     ext_modules=[
         Extension(
-            "csgo.parser.wrapper",
-            sources=["csgo/parser/wrapper.go"],
-            include_dirs=[f"{os.path.dirname(os.path.realpath(__file__))}/csgo/parser"],
+            "awpy.parser.wrapper",
+            sources=["awpy/parser/wrapper.go"],
+            include_dirs=[f"{os.path.dirname(os.path.realpath(__file__))}/awpy/parser"],
             py_limited_api=True,
             define_macros=[("Py_LIMITED_API", None)],
         )

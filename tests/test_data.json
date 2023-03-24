@@ -34,5 +34,17 @@
     },
     "pov-clean": {
         "url": "https://storage.googleapis.com/csgo-tests/041.dem"
+    },
+    "anonymo-vs-ldlc-m1-nuke": {
+        "url": "https://storage.googleapis.com/csgo-tests/anonymo-vs-ldlc-m1-nuke.dem"
+    },
+    "nip-vs-gambit-m2-inferno": {
+        "url": "https://storage.googleapis.com/csgo-tests/nip-vs-gambit-m2-inferno.dem"
+    },
+    "vitality-vs-ence-m1-mirage": {
+        "url": "https://storage.googleapis.com/csgo-tests/vitality-vs-ence-m1-mirage.dem"
+    },
+    "esea_match_16902209": {
+        "url": "https://storage.googleapis.com/csgo-tests/esea_match_16902209.dem"
     }
 }
