@@ -41,7 +41,7 @@ def get_version():
 
 
 setup(
-    name="awpy",
+    name="eg_awpy",
     version=get_version(),
     packages=find_packages(),
     # Project uses reStructuredText, so ensure that the docutils get

@@ -72,7 +72,7 @@ jobs:
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package eg_awpy --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
@@ -84,7 +84,7 @@ jobs:
           echo "0.0.0.dev0+${{ github.ref_name }}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package eg_awpy --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
   
   Production:
@@ -134,7 +134,7 @@ jobs:
           echo "${TAG:1}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package eg_awpy --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
@@ -147,5 +147,5 @@ jobs:
           echo "${TAG:1}" > VERSION
           echo `python3 setup.py --version` > VERSION
           python setup.py bdist_wheel
-          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package csgo --versions $PACKAGE_VERSION
+          aws codeartifact delete-package-versions --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}} --format pypi --package eg_awpy --versions $PACKAGE_VERSION
           python -m twine upload --repository codeartifact dist/* --verbose
