@@ -29,7 +29,7 @@ jobs:
 
   FeatureBranch:
     name: Feature Branch -> Develop
-    if: ${{ startsWith(github.ref, 'refs/heads/ENG-') == true && github.event.inputs.environment == 'DEV' }}
+    # if: ${{ startsWith(github.ref, 'refs/heads/ENG-') == true && github.event.inputs.environment == 'DEV' }}
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
