@@ -232,9 +232,9 @@ class DemoParser:
 
             return
 
-        self.output_file = self.outpath + "/" + self.demo_id + ".json"
+        self.output_file = self.demo_id + ".json"
 
-        if os.path.isfile(self.output_file):
+        if os.path.isfile(self.outpath + "/" + self.output_file):
             self.logger.info("Wrote demo parse output to %s", self.output_file)
             self.parse_error = False
         else:

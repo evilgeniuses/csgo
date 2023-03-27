@@ -6,6 +6,8 @@ import numpy as np
 import re
 import subprocess
 import logging
+import pandas as pd
+from awpy.types import Area
 
 
 logger = logging.getLogger(__name__)
