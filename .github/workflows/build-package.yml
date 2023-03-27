@@ -32,7 +32,7 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/heads/ENG-') == true && github.event.inputs.environment == 'DEV' }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-20.04, macos-latest]
     runs-on: ${{ matrix.os }}
     environment:
       name: Develop
@@ -64,7 +64,7 @@ jobs:
           aws-region: ${{ env.aws-region }}
       
       - name: Build package dist Ubuntu
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-20.04'
         run: |
           aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
@@ -76,7 +76,7 @@ jobs:
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
-        if: matrix.os != 'ubuntu-latest'
+        if: matrix.os != 'ubuntu-20.04'
         run: |
           aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
@@ -92,7 +92,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags')
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-20.04, macos-latest]
     needs: Lint
     runs-on: ${{ matrix.os }}
     environment:
@@ -125,7 +125,7 @@ jobs:
           aws-region: ${{ env.aws-region }}
       
       - name: Build package dist Ubuntu
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-20.04'
         run: |
           aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
@@ -138,7 +138,7 @@ jobs:
           python -m twine upload --repository codeartifact dist/* --verbose
       
       - name: Build package dist Windows, MacOS
-        if: matrix.os != 'ubuntu-latest'
+        if: matrix.os != 'ubuntu-20.04'
         run: |
           aws codeartifact login --tool twine --domain eg --domain-owner ${{ env.aws-account }} --repository ${{env.environment}}
           pip install --upgrade pip setuptools
